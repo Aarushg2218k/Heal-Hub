@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <script src="AngularJs/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  
+    
+  <script>
+      $(document).ready(function () {
+            function setActiveUser() {
+            if(localStorage.getItem("Activekuch")==undefined)
+            {
+                location.href="index.html";
+                return;
+            }
+                var au = localStorage.getItem("Activekuch");
+                // alert(au);
+                $("#txtEmail").val(au).attr("readonly", true);
+            }
+            setActiveUser();
+        })
+    var module = angular.module("myModule", []);
+    module.controller("myController", function ($scope, $http) {
+      $scope.eml=localStorage.getItem("Activekuch");
+      $scope.donate_med = function (eml){
+        var url = "/donate-med?email=" + eml;
+        $http.get(url).then(done, fail);
+        function done(response) {
+          //    alert(response.data);
+          $scope.table = response.data;
+          //    $scope.usersrecord();
+
+        }
+        function fail(response) {
+          alert(response.data);
+        }
+      }
+
+      $scope.delete_med = function (srno) {
+        var url = "/delete-med?Srno=" + srno;
+        $http.get(url).then(done, fail);
+        function done(response) {
+          $scope.donate_med($scope.eml);
+        }
+        function fail(response) {
+          alert(response.data);
+        }
+      }
+    })
+  </script>
+</head>
+
+<body ng-app="myModule" ng-controller="myController">
+  <nav class="navbar navbar-expand-lg navbar bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Dropdown
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled">Disabled</a>
+          </li>
+        </ul>
+        <!-- <form class="d-flex" role="search"> -->
+        <!-- <button class="btn btn-outline-success" type="submit">Search</button>
+            </form> -->
+      </div>
+    </div>
+  </nav>
+  <!-- ================================================================================================= -->
+  <center class="mt-5">
+    <label for="">Email Id</label>
+    <input type="text" class="form-label" id="txtEmail" ng-model="eml">
+    <input type="button" class="btn btn-primary" ng-click="donate_med(eml);" value="Get Records">
+    <table class="table table-striped mt-5 text-center table-bordered">
+      <tr>
+        <th>Sr no.</th>
+        <th class="text-start">Email</th>
+        <th>Medicine Name</th>
+        <th>Exp. Date</th>
+        <th>Packing Type</th>
+        <th>Quantity</th>
+        <th>Operations</th>
+      </tr>
+      <tr ng-repeat="record in table">
+        <td>{{$index+1}}</td>
+        <td class="text-start">{{record.email}}</td>
+        <td>{{record.med}}</td>
+        <td>{{record.expdate}}</td>
+        <td>{{record.packing}}</td>
+        <td>{{record.qty}}</td>
+        <td>
+          <input type="button" class="btn btn-outline-danger" value="Unavail" ng-click="delete_med(record.srno);">
+        </td>
+
+      </tr>
+    </table>
+  </center>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

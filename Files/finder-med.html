@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="AngularJs/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            if(localStorage.getItem("Activekuch")==undefined)
+            {
+                location.href="index.html";
+                return;
+            }
+        })
+        var module = angular.module("myModule", []);
+        module.controller("myController", function ($scope, $http) {
+            $scope.selcity;
+            $scope.selmed;
+            $scope.findcity = function () {
+                var url = "/find-city";
+                $http.get(url).then(done, fail);
+                function done(response) {
+                    // alert(JSON.stringify(response.data));
+                    $scope.table = response.data;
+
+                }
+                function fail(response) {
+                    alert(response.data);
+                }
+            }
+            $scope.findmed = function () {
+                var url = "/find-meds";
+                $http.get(url).then(done, fail);
+                function done(response) {
+                    // alert(JSON.stringify(response.data));
+                    $scope.tablemed = response.data;
+
+                }
+                function fail(response) {
+                    alert(response.data);
+                }
+            }
+            $scope.showselcity = function () {
+                // alert($scope.selcity.city);
+            }
+            $scope.showselmed = function () {
+                // alert($scope.selmed.med);
+            }
+            $scope.find_donor = function () {
+                var url = "/find-donor?citykuch=" + $scope.selcity.city + "&medkuch=" + $scope.selmed.med;
+                $http.get(url).then(done, fail);
+                function done(response) {
+                    // alert(JSON.stringify(response.data));
+                    $scope.tableinnerjoin = response.data;
+
+                }
+                function fail(response) {
+                    alert(response.data);
+                }
+            }
+            $scope.opencard = function (index) {
+                $scope.selindex = $scope.tableinnerjoin[index];
+            }
+        })
+    </script>
+    
+</head>
+
+<body ng-app="myModule" ng-controller="myController" ng-init="findcity();findmed()">
+    <nav class="navbar navbar-expand-lg navbar bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Disabled</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- ============================================================================== -->
+
+
+
+
+    <div class="row mt-5">
+        <div class="col-4 offset-1 ">
+            Select City:- <select ng-options="obj.city for obj in table" class="form-control  border border-primary"
+                ng-model="selcity" ng-change="showselcity();">
+                <option value="">Select</option>
+            </select>
+        </div>
+        <div class="col-4 offset-1">
+            Select Medicine :- <select ng-options="obj.med for obj in tablemed"
+                class="form-control  border border-primary" ng-model="selmed" ng-change="showselmed();">
+                <option value="">Select</option>
+            </select>
+        </div>
+    </div>
+    <center>
+        <input type="button" class="btn btn-primary mt-5" value="Find Donors" ng-click="find_donor();">
+
+
+        <div class="card me-4 mb-2 mt-4 text-start" style="width: 21rem;" ng-repeat="obj in tableinnerjoin">
+
+            <div class="card-header text-center">
+                <img src="fdpics/donor-card.jpg" class="card-img-top" alt="..." style="width:10vw">
+            </div>
+
+            <div class="card-body">
+                <h5 class="card-title text-center">{{obj.name}}</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Mobile no.: {{obj.mobile}}</li>
+                <li class="list-group-item">Email : {{obj.email}}</li>
+                <!-- <li class="list-group-item">City : {{obj.city}}</li> -->
+                <li class="list-group-item">Available from : {{obj.afrom}}</li>
+                <li class="list-group-item">Available to : {{obj.ato}}</li>
+                <div class="card-body d-grid gap-2 col-6 mx-auto">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop" ng-click="opencard($index);">More Details</button>
+                </div>
+                <!-- <li class="list-group-item">Gender : {{obj.gender}}</li> -->
+                <!-- <li class="list-group-item">Medicine Name : {{obj.med}}</li> -->
+            </ul>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5  " id="staticBackdropLabel">Donor Details</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="fdpics/donor-card.jpg" class="card-img-top  text-center" alt="..." style="width:10vw">
+                        <hr>
+                        <div class="text-start">
+                            Email:- {{selindex.email}}
+                        </div>
+                        <hr>
+                        <div class="text-start">
+                            Name:- {{selindex.name}}
+                        </div>
+                        <hr>
+                        <div class="text-start">
+                            Mobile no.:- {{selindex.mobile}}
+                        </div>
+                        <hr>
+                        <div class="text-start">
+                            Available:- {{selindex.afrom}}-{{selindex.ato}}
+                        </div>
+                        <hr>
+                        <div class="text-start">
+                            Address:- {{selindex.address}}
+                        </div>
+                        <hr>
+                        <div class="text-start">
+                            City:- {{selindex.city}}
+                        </div>
+
+
+                        <!-- <div class="text-start">
+            Available To:- {{selindex.ato}}
+            </div> -->
+                        <!-- <hr>
+            <div class="text-start">
+            Gender:- {{selindex.gender}}
+            </div> -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="//wa.me/{{selindex.mobile}}" class="btn btn-primary"> Chat with Donor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </center>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

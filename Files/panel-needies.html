@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="AngularJs/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+      // $(document).ready(function(){
+      //       if(localStorage.getItem("Activekuch")==undefined)
+      //       {
+      //           location.href="index.html";
+      //           return;
+      //       }
+      //   })
+            var module=angular.module("myModule",[]);
+            module.controller("myController",function($scope,$http){
+                $scope.needyusers=function(){
+                    var url="/angular-needy-records";
+                    $http.get(url).then(done,fail);
+                    function done(response){
+                        // alert(JSON.stringify(response.data));
+                        $scope.table=response.data;
+                    }
+                    function fail(response){
+                        alert(response.data);
+                    }
+                }
+            })
+    </script>
+</head>
+<body ng-app="myModule" ng-controller="myController">
+    <nav class="navbar navbar-expand-lg navbar bg-primary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled">Disabled</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <center>
+        <input type="button" class="btn btn-success mt-3" value="Needy Users" ng-click="needyusers();" >
+        <table border="2" class="table table-striped mt-4">
+            <tr align="center"> 
+                <th>Sr no.</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Mobile no.</th>
+                <th>Date of Birth</th>
+                <th>Gender</th>
+                <th>City</th>
+                <th>Address</th>
+                <th>Pic Uploaded</th>
+            </tr>
+            <tr align="center" ng-repeat="record in table">
+                <th>{{$index+1}}</th>
+                <th>{{record.email}}</th>
+                <th>{{record.name}}</th>
+                <th>{{record.mobile}}</th>
+                <th>{{record.dob}}</th>
+                <th>{{record.gender}}</th>
+                <th>{{record.city}}</th>
+                <th>{{record.address}}</th>
+                <td align="center">
+                    <img src="pics/{{record.picname}}" alt="" width="100" height="100">
+                </td>
+            </tr>
+        </table>
+    </center>
+    
+</body>
+</html>
